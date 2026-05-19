@@ -1,32 +1,27 @@
+import { createVoice } from "./voice.js";
+
 export function createAudioEngine() {
   let audioCtx;
-  let osc;
-  let gain;
+  const activeVoices = new Map(); // key: noteId → voice
 
   return {
     async init() {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     },
 
-    playNote(freq) {
-      osc = audioCtx.createOscillator();
-      gain = audioCtx.createGain();
-
-      osc.type = "sawtooth";
-      osc.frequency.value = freq;
-
-      gain.gain.value = 0.2;
-
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-
-      osc.start();
+    playNote(freq, id = freq) {
+      const voice = createVoice(audioCtx, freq);
+      activeVoices.set(id, voice);
+      voice.start();
     },
 
-    stopNote() {
-      if (osc) {
-        osc.stop();
-        osc.disconnect();
+    stopNote(id = null) {
+      if (id !== null) {
+        const voice = activeVoices.get(id);
+        if (voice) {
+          voice.stop();
+          activeVoices.delete(id);
+        }
       }
     }
   };

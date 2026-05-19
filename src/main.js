@@ -13,4 +13,15 @@ window.playTest = () => {
 
 window.stopTest = () => {
   engine.stopNote();
+
+window.playTestChord = () => {
+  engine.playNote(261.63, "C");
+  engine.playNote(329.63, "E");
+  engine.playNote(392.00, "G");
+};
+
+window.stopTestChord = () => {
+  engine.stopNote("C");
+  engine.stopNote("E");
+  engine.stopNote("G");
 };
